@@ -12,7 +12,6 @@ namespace DefaultNamespace
 
         private void Awake()
         {
-            engine.StartEngine();
         }
 
         private void Update()
@@ -20,17 +19,6 @@ namespace DefaultNamespace
             verticalInput = Input.GetAxis("Vertical");
             if (verticalInput != 0)
             {
-                engine.Gas(verticalInput);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                transmission.ChangeGear(1);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                transmission.ChangeGear(-1);
             }
         }
     }

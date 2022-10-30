@@ -8,19 +8,23 @@ namespace DefaultNamespace
     {
         [SerializeField] private List<Wheel> wheels;
         [SerializeField] private Transmission transmission;
-
-        [SerializeField] private float torque;
+        [SerializeField] private float gearRatio;
+        [SerializeField] private float TORQUE;
+        [SerializeField] private float RPM;
 
         private void FixedUpdate()
         {
-            TurnWheels();
+            TORQUE = transmission.Torque * gearRatio;
+            RPM = transmission.RPM / gearRatio;
+            Process();
         }
 
-        private void TurnWheels()
+        private void Process()
         {
-            foreach (var wheel in wheels)
+            foreach (var item in wheels)
             {
-                wheel.Turn(torque);
+                item.DifferentialRPM = RPM;
+                item.toruqe = TORQUE / 2;
             }
         }
     }

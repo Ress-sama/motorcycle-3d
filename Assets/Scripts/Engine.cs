@@ -5,63 +5,34 @@ using DefaultNamespace;
 using UnityEditor.Rendering;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Engine : MonoBehaviour
 {
-    public float Power;
-    public float Torque;
-    [SerializeField] private float minRpm;
-    [SerializeField] private float maxRpm;
-    private bool isActive;
-    private float gasLevel { get; set; }
-    public float motorRPM { get; set; }
+    [SerializeField] private AnimationCurve Torque;
+
+
+    [SerializeField] private float IdleRPM;
+    [SerializeField] private float IncraseSpeed;
+    private float MaxRPM;
+    public float TORQUE => Torque.Evaluate(RPM);
+    public float RPM;
+    public float TRANSMISSION_RPM;
+
 
     private void Awake()
     {
-        gasLevel = 0.1f;
+        MaxRPM = Torque.keys[Torque.keys.Length - 1].time;
     }
 
     private void FixedUpdate()
     {
-        RotateMotor();
-        UpdateGasLevel();
+        Process(Input.GetAxis("Vertical"));
     }
 
-    public void StartEngine()
+    private void Process(float throttle)
     {
-        isActive = true;
-    }
-
-    public void StopEngine()
-    {
-        isActive = false;
-    }
-
-    private void RotateMotor()
-    {
-        if (!isActive) return;
-        motorRPM = Mathf.Lerp(motorRPM, gasLevel * maxRpm * 1000, Time.deltaTime / 50);
-        Torque = 63.025f * Power / motorRPM;
-    }
-
-    public void Gas(float value)
-    {
-        gasLevel = value;
-    }
-
-    private void UpdateGasLevel()
-    {
-        if (gasLevel <= 0.1f)
-        {
-            gasLevel = 0.1f;
-            return;
-        }
-
-        gasLevel -= 1 * Time.fixedDeltaTime;
-    }
-
-    private void AffectRpm(float affect)
-    {
-        motorRPM -= affect;
+        RPM += TRANSMISSION_RPM;
+        RPM = Mathf.Lerp(RPM, MaxRPM * throttle, Time.fixedDeltaTime * IncraseSpeed);
     }
 }
