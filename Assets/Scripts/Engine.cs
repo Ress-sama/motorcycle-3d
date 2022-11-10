@@ -26,6 +26,10 @@ namespace Riyezu.CarSystem
                 RPM = IdleRPM;
             }
             RPM = Mathf.SmoothDamp(RPM, IdleRPM + transmissionRpm * throttle, ref velocity, IncraseSpeed);
+            if (RPM > MaxRPM)
+            {
+                RPM = MaxRPM;
+            }
         }
     }
 }

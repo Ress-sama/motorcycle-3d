@@ -9,8 +9,15 @@ namespace Riyezu
         [SerializeField] private Engine engine;
         [SerializeField] private Transmission transmission;
         [SerializeField] private Differential differential;
+        [SerializeField] private Steering steering;
+        [SerializeField] private Brakes breake;
 
-        private float verticalInput;
+        [SerializeField] private float wheelRpmLimit;
+        [SerializeField] private float torqueToWheel;
+
+
+        [SerializeField] private float verticalInput;
+        [SerializeField] private float horizontalInput;
 
         private void Awake()
         {
@@ -19,6 +26,17 @@ namespace Riyezu
         private void Update()
         {
             verticalInput = Input.GetAxis("Vertical");
+            horizontalInput = Input.GetAxis("Horizontal");
+
+            if (verticalInput < 0)
+            {
+                transmission.Clutch = Mathf.Abs(verticalInput);
+            }
+            else
+            {
+                transmission.Clutch = 0;
+            }
+
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 transmission.UpShift();
@@ -29,13 +47,20 @@ namespace Riyezu
                 transmission.DownShift();
             }
 
+            breake.ApplyBrake(verticalInput);
+            steering.SteerWheels(horizontalInput);
+
             engine.Process(verticalInput, transmission.RPM);
             transmission.EngineTorque(engine.TORQUE);
             differential.TransmissionTorque(transmission.Torque);
-            if (differential.WheelsRpm < engine.MaxRPM)
+
+            wheelRpmLimit = (engine.MaxRPM / transmission.CurrentGearRatio) / differential.GearRatio;
+            torqueToWheel = differential.TORQUE;
+            if (differential.WheelsRpm > wheelRpmLimit)
             {
-                differential.AddTorqueToWheels(differential.TORQUE);
+                torqueToWheel = 0;
             }
+            differential.AddTorqueToWheels(torqueToWheel);
 
             transmission.UpdateRpm(differential.RPM);
         }

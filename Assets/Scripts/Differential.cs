@@ -9,7 +9,7 @@ namespace Riyezu.CarSystem
         [SerializeField] private List<WheelCollider> wheels;
         [SerializeField] private float gearRatio;
 
-        [SerializeField] private float difRpm;
+        public float GearRatio { get => gearRatio; }
 
         public float RPM
         {
@@ -21,7 +21,6 @@ namespace Riyezu.CarSystem
 
         private void FixedUpdate()
         {
-            difRpm = RPM;
             CalculateWheelsRpm();
         }
 
@@ -46,7 +45,7 @@ namespace Riyezu.CarSystem
         {
             foreach (var wheel in wheels)
             {
-                wheel.motorTorque = torque;
+                wheel.motorTorque = torque / 2;
             }
         }
 
