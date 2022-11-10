@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace DefaultNamespace
+namespace Riyezu.CarSystem
 {
     public class Transmission : MonoBehaviour
     {
-        public float Torque { get; private set; }
+        public float Torque;
         [SerializeField] private int gear;
         [SerializeField] private List<float> gearRatios;
-        [SerializeField] private Engine engine;
         public float RPM;
-
 
         public void UpShift()
         {
             gear++;
-            //3.64 - 1.95 = ~1.7
-            float currentTransmissionRPM = RPM * (gearRatios[gear] - gearRatios[gear - 1]);
-            float difRpm = engine.RPM - currentTransmissionRPM;
         }
 
         public void DownShift()
@@ -27,29 +20,14 @@ namespace DefaultNamespace
             gear--;
         }
 
-        private void Update()
+        public void EngineTorque(float torque)
         {
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                UpShift();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                DownShift();
-            }
-        }
-        private void FixedUpdate()
-        {
-
-
-            Process();
+            Torque = torque * gearRatios[gear];
         }
 
-        private void Process()
+        public void UpdateRpm(float wheelRpm)
         {
-            Torque = engine.TORQUE * gearRatios[gear];
-            RPM = engine.RPM / gearRatios[gear];
+            RPM = wheelRpm * gearRatios[gear];
         }
     }
 }

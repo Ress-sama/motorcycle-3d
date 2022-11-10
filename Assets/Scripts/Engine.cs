@@ -1,38 +1,31 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DefaultNamespace;
-using UnityEditor.Rendering;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Engine : MonoBehaviour
+namespace Riyezu.CarSystem
 {
-    [SerializeField] private AnimationCurve Torque;
-
-
-    [SerializeField] private float IdleRPM;
-    [SerializeField] private float IncraseSpeed;
-    private float MaxRPM;
-    public float TORQUE => Torque.Evaluate(RPM);
-    public float RPM;
-    public float TRANSMISSION_RPM;
-
-
-    private void Awake()
+    public class Engine : MonoBehaviour
     {
-        MaxRPM = Torque.keys[Torque.keys.Length - 1].time;
-    }
+        [SerializeField] private AnimationCurve Torque;
 
-    private void FixedUpdate()
-    {
-        Process(Input.GetAxis("Vertical"));
-    }
 
-    private void Process(float throttle)
-    {
-        RPM += TRANSMISSION_RPM;
-        RPM = Mathf.Lerp(RPM, MaxRPM * throttle, Time.fixedDeltaTime * IncraseSpeed);
+        [SerializeField] private float IdleRPM;
+        [SerializeField] private float IncraseSpeed;
+        public float MaxRPM;
+        public float TORQUE => Torque.Evaluate(RPM);
+        public float RPM;
+
+        private void Awake()
+        {
+            MaxRPM = Torque.keys[Torque.keys.Length - 1].time;
+        }
+
+        public void Process(float throttle, float transmissionRpm)
+        {
+            float velocity = 0;
+            if (throttle <= 0.1)
+            {
+                RPM = IdleRPM;
+            }
+            RPM = Mathf.SmoothDamp(RPM, IdleRPM + transmissionRpm * throttle, ref velocity, IncraseSpeed);
+        }
     }
 }
