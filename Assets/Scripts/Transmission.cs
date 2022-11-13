@@ -12,6 +12,7 @@ namespace Riyezu.CarSystem
         public float RPM;
         public float rpm;
         public float CurrentGearRatio => gearRatios[gear];
+        public float CurrentGear => gear;
         public float Clutch = 0;
         public float ClutchRPM;
 

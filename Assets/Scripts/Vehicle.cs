@@ -76,7 +76,7 @@ namespace Riyezu
 
             wheelRpmLimit = (engine.MaxRPM / transmission.CurrentGearRatio) / differential.GearRatio;
             torqueToWheel = differential.TORQUE;
-            if (differential.WheelsRpm > wheelRpmLimit)
+            if (Mathf.Abs(differential.WheelsRpm) > Mathf.Abs(wheelRpmLimit))
             {
                 torqueToWheel = 0;
             }
