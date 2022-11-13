@@ -4,30 +4,38 @@ using UnityEngine;
 
 namespace Riyezu
 {
-    public class Motorcycle : MonoBehaviour
+    public class Vehicle : MonoBehaviour
     {
+        public float KPH;
+
+        [SerializeField] private Rigidbody rigidbody;
+
         [SerializeField] private Engine engine;
         [SerializeField] private Transmission transmission;
         [SerializeField] private Differential differential;
         [SerializeField] private Steering steering;
         [SerializeField] private Brakes breake;
 
+
         [SerializeField] private float wheelRpmLimit;
         [SerializeField] private float torqueToWheel;
 
 
-        [SerializeField] private float verticalInput;
-        [SerializeField] private float horizontalInput;
+        private float verticalInput;
+        private float horizontalInput;
+
+
+        public Engine ENGINE { get => engine; }
+        public Transmission TRANSMISSION { get => transmission; }
+
 
         private void Awake()
         {
         }
 
+
         private void Update()
         {
-            verticalInput = Input.GetAxis("Vertical");
-            horizontalInput = Input.GetAxis("Horizontal");
-
             if (verticalInput < 0)
             {
                 transmission.Clutch = Mathf.Abs(verticalInput);
@@ -46,6 +54,18 @@ namespace Riyezu
             {
                 transmission.DownShift();
             }
+        }
+
+        private void FixedUpdate()
+        {
+
+            KPH = rigidbody.velocity.magnitude * 3.6f;
+
+            steering.CarSpeed = KPH;
+
+            verticalInput = Input.GetAxis("Vertical");
+            horizontalInput = Input.GetAxis("Horizontal");
+
 
             breake.ApplyBrake(verticalInput);
             steering.SteerWheels(horizontalInput);
