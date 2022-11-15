@@ -48,19 +48,20 @@ namespace Riyezu.CarSystem
                 ackermanAngleRight = 0;
             }
 
-
             leftWheel.steerAngle = wheelAngleLeft * (1.04f - targetSpeedRatio);
+
             rightWheel.steerAngle = wheelAngleRight * (1.04f - targetSpeedRatio);
+
 
         }
 
         public void FixedUpdate()
         {
             float carSpeed = CarSpeed > 80 ? 80 : CarSpeed;
-            Debug.Log(carSpeed);
             targetSpeedRatio = carSpeed / 80;
 
-            wheelAngleLeft = Mathf.SmoothDamp(wheelAngleLeft, ackermanAngleLeft, ref velocity, turnSmoothTime) ;
+            wheelAngleLeft = Mathf.SmoothDamp(wheelAngleLeft, ackermanAngleLeft, ref velocity, turnSmoothTime);
+
             wheelAngleRight = Mathf.SmoothDamp(wheelAngleRight, ackermanAngleRight, ref velocity, turnSmoothTime);
         }
 

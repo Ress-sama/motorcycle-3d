@@ -12,8 +12,6 @@ namespace Riyezu.CarSystem
         private void Awake()
         {
             wheelSyncs[0].targetWheelCollider.GetWorldPose(out Vector3 wcPosition, out Quaternion wcRotation);
-            Debug.Log(wcRotation);
-            Debug.Log(wheelSyncs[0].syncObject.rotation);
         }
 
         private void Update()

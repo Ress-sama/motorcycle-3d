@@ -6,36 +6,33 @@ namespace Riyezu.CarSystem
 {
     public class Transmission : MonoBehaviour
     {
-        public float Torque;
+        public float TORQUE;
         [SerializeField] private int gear;
         [SerializeField] private List<float> gearRatios;
         public float RPM;
-        public float rpm;
         public float CurrentGearRatio => gearRatios[gear];
         public float CurrentGear => gear;
-        public float Clutch = 0;
-        public float ClutchRPM;
 
         public void UpShift()
         {
-            Clutch = 1;
+            if (gearRatios.Count <= gear+1) return;
             gear++;
         }
 
         public void DownShift()
         {
-            Clutch = 1;
+            if (gear-1<0) return;
             gear--;
         }
 
-        public void EngineTorque(float torque)
+        public void Process(float torque)
         {
-            Torque = torque * gearRatios[gear] * (1 - Clutch);
+            TORQUE = torque * gearRatios[gear];
         }
 
         public void UpdateRpm(float wheelRpm)
         {
-            RPM = wheelRpm * gearRatios[gear] * (1 - Clutch);
+            RPM = wheelRpm * gearRatios[gear];
         }
 
     }

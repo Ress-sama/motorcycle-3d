@@ -36,14 +36,9 @@ namespace Riyezu
 
         private void Update()
         {
-            if (verticalInput < 0)
-            {
-                transmission.Clutch = Mathf.Abs(verticalInput);
-            }
-            else
-            {
-                transmission.Clutch = 0;
-            }
+
+            verticalInput = Input.GetAxis("Vertical");
+            horizontalInput = Input.GetAxis("Horizontal");
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
@@ -60,29 +55,39 @@ namespace Riyezu
         {
 
             KPH = rigidbody.velocity.magnitude * 3.6f;
-
             steering.CarSpeed = KPH;
-
-            verticalInput = Input.GetAxis("Vertical");
-            horizontalInput = Input.GetAxis("Horizontal");
-
 
             breake.ApplyBrake(verticalInput);
             steering.SteerWheels(horizontalInput);
 
             engine.Process(verticalInput, transmission.RPM);
-            transmission.EngineTorque(engine.TORQUE);
-            differential.TransmissionTorque(transmission.Torque);
+            transmission.Process(engine.TORQUE);
+            differential.Process(transmission.TORQUE);
 
-            wheelRpmLimit = (engine.MaxRPM / transmission.CurrentGearRatio) / differential.GearRatio;
+            CalculateWheelRpmLimit();
+            CalculateTorqueToWheel();
+
+            differential.ApplyTorqueToWheels(torqueToWheel);
+            transmission.UpdateRpm(differential.RPM);
+        }
+
+        private void CalculateWheelRpmLimit()
+        {
+            float engineRpm = engine.RPM;
+            if (verticalInput < 0.1f)
+            {
+                engineRpm = engine.IdleRPM;
+            }
+            wheelRpmLimit = (engineRpm / transmission.CurrentGearRatio) / differential.GearRatio;
+        }
+
+        private void CalculateTorqueToWheel()
+        {
             torqueToWheel = differential.TORQUE;
             if (Mathf.Abs(differential.WheelsRpm) > Mathf.Abs(wheelRpmLimit))
             {
                 torqueToWheel = 0;
             }
-            differential.AddTorqueToWheels(torqueToWheel);
-
-            transmission.UpdateRpm(differential.RPM);
         }
     }
 }

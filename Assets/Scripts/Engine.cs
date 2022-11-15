@@ -6,11 +6,10 @@ namespace Riyezu.CarSystem
     {
         [SerializeField] private AnimationCurve Torque;
 
-
-        [SerializeField] private float IdleRPM;
-        [SerializeField] private float IncraseSpeed;
+        public float IncraseSpeed;
+        public float IdleRPM;
         public float MaxRPM;
-        public float TORQUE => Torque.Evaluate(RPM);
+        public float TORQUE;
         public float RPM;
 
         private void Awake()
@@ -21,14 +20,20 @@ namespace Riyezu.CarSystem
         public void Process(float throttle, float transmissionRpm)
         {
             float velocity = 0;
-            if (throttle <= 0.1)
-            {
-                RPM = IdleRPM;
-            }
-            RPM = Mathf.SmoothDamp(RPM, IdleRPM + transmissionRpm * throttle, ref velocity, IncraseSpeed);
+            RPM = Mathf.SmoothDamp(RPM, IdleRPM + transmissionRpm, ref velocity, IncraseSpeed);
             if (RPM > MaxRPM)
             {
                 RPM = MaxRPM;
+            }
+            if (RPM < IdleRPM)
+            {
+                RPM = IdleRPM;
+            }
+            TORQUE = Torque.Evaluate(RPM) * throttle;
+
+            if (throttle<0.1f)
+            {
+                TORQUE = Torque.Evaluate(IdleRPM);
             }
         }
     }

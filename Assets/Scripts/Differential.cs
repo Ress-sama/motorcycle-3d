@@ -41,7 +41,7 @@ namespace Riyezu.CarSystem
             WheelsRpm = sum / wheels.Count;
         }
 
-        public void AddTorqueToWheels(float torque)
+        public void ApplyTorqueToWheels(float torque)
         {
             foreach (var wheel in wheels)
             {
@@ -49,7 +49,7 @@ namespace Riyezu.CarSystem
             }
         }
 
-        public void TransmissionTorque(float torque)
+        public void Process(float torque)
         {
             TORQUE = torque * gearRatio;
         }
